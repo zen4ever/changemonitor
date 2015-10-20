@@ -4,14 +4,15 @@ REGION = us-east-1
 PAYLOAD?='{"key1":"value1", "key2":"value2", "key3":"value3"}'
 ROLE=$(shell aws iam get-role --role-name $(PROJECT) --query 'Role.Arn' | tr -d '"')
 all: build
-build: clean
-	mkdir build
+$(FUNCTION).zip:
+	mkdir -p build
 	pip install -t build/ .
 	pip install -t build/ -r requirements.txt 
 	cd build; zip -r ../$(FUNCTION).zip .; cd ..
+build: $(FUNCTION).zip
 clean:
 	rm -rf build/
-	rm $(FUNCTION).zip
+	rm *.zip
 destroy:
 	aws lambda delete-function --function-name $(FUNCTION)
 deploy: build
@@ -38,4 +39,4 @@ invoke:
     --function-name $(FUNCTION) \
     --region $(REGION) \
     --log-type Tail \
-    --payload $(PAYLOAD) outputfile.txt
+    --payload $(PAYLOAD) outputfile.txt --query 'LogResult' | tr -d '"' | base64 --decode
