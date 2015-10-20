@@ -11,6 +11,7 @@ build: clean
 	cd build; zip -r ../$(FUNCTION).zip .; cd ..
 clean:
 	rm -rf build/
+	rm $(FUNCTION).zip
 destroy:
 	aws lambda delete-function --function-name $(FUNCTION)
 deploy: build
@@ -28,6 +29,9 @@ create_role:
 	aws iam put-role-policy --role-name $(PROJECT) --policy-name $(PROJECT)-permissions --policy-document file://role_permissions.json
 update_role:
 	aws iam put-role-policy --role-name $(PROJECT) --policy-name $(PROJECT)-permissions --policy-document file://role_permissions.json
+delete_role:
+	aws iam delete-role-policy --role-name $(PROJECT) --policy-name $(PROJECT)-permissions
+	aws iam delete-role --role-name $(PROJECT)
 invoke:
 	aws lambda invoke \
     --invocation-type RequestResponse \
