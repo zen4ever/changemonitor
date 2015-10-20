@@ -1,4 +1,5 @@
 PROJECT = changemonitor
+FUNCTION?= $(PROJECT)
 REGION = us-east-1
 PAYLOAD?='{"key1":"value1", "key2":"value2", "key3":"value3"}'
 ROLE=$(shell aws iam get-role --role-name $(PROJECT) --query 'Role.Arn' | tr -d '"')
@@ -7,16 +8,16 @@ build: clean
 	mkdir build
 	pip install -t build/ .
 	pip install -t build/ -r requirements.txt 
-	cd build; zip -r ../$(PROJECT).zip .; cd ..
+	cd build; zip -r ../$(FUNCTION).zip .; cd ..
 clean:
 	rm -rf build/
 destroy:
-	aws lambda delete-function --function-name $(PROJECT)
+	aws lambda delete-function --function-name $(FUNCTION)
 deploy: build
 	aws lambda create-function \
     --region $(REGION) \
-    --function-name $(PROJECT) \
-    --zip-file fileb://$(PROJECT).zip \
+    --function-name $(FUNCTION) \
+    --zip-file fileb://$(FUNCTION).zip \
     --role $(ROLE) \
     --handler "$(PROJECT)"_lambda.handler \
     --runtime python2.7 \
@@ -30,7 +31,7 @@ update_role:
 invoke:
 	aws lambda invoke \
     --invocation-type RequestResponse \
-    --function-name $(PROJECT) \
+    --function-name $(FUNCTION) \
     --region $(REGION) \
     --log-type Tail \
     --payload $(PAYLOAD) outputfile.txt
