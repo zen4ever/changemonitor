@@ -19,7 +19,7 @@ CHANGEMONITOR_SNS_TOPIC = os.environ.get('CHANGEMONITOR_SNS_TOPIC')
 
 
 def handler(event, context):
-    logger.info("Got event: {event}".format(event))
+    logger.info("Got event: {event}".format(event=event))
     logger.info("Checking your url: {url}".format(url=CHANGEMONITOR_URL))
     diff = check_if_changed(CHANGEMONITOR_URL, CHANGEMONITOR_BUCKET)
     diff_text = "\n".join(diff)
