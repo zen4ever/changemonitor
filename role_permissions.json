@@ -9,6 +9,23 @@
             ],
             "Effect": "Allow",
             "Resource": "arn:aws:logs:*:*:*"
+        }, {
+            "Action": [
+                "s3:*"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::changemonitor-state",
+                "arn:aws:s3:::changemonitor-state/*"
+            ]
+        }, {
+            "Action": [
+                "sns:Publish"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:sns:us-east-1:351020913034:changemonitor-notify"
+            ]
         }
     ]
 }

@@ -55,3 +55,4 @@ target/
 
 .envrc
 *.zip
+.env

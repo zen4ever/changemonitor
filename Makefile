@@ -8,6 +8,7 @@ $(FUNCTION).zip:
 	mkdir -p build
 	pip install -t build/ .
 	pip install -t build/ -r requirements.txt 
+	cp .env build/
 	cd build; zip -r ../$(FUNCTION).zip .; cd ..
 build: $(FUNCTION).zip
 clean:

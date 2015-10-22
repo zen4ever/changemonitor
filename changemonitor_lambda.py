@@ -1,12 +1,29 @@
+import os
+from os.path import join, dirname
+from dotenv import load_dotenv
+from changemonitor.utils import check_if_changed, notify
+
 import logging
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-def handler(event, context):
-    logger.info('got event{}'.format(event))
-    logger.info('got contenxt{}'.format(context))
-    logger.error('something went wrong')
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 
-    return 'Hello world!'
+
+CHANGEMONITOR_URL = os.environ.get('CHANGEMONITOR_URL')
+CHANGEMONITOR_BUCKET = os.environ.get('CHANGEMONITOR_BUCKET')
+CHANGEMONITOR_SNS_TOPIC = os.environ.get('CHANGEMONITOR_SNS_TOPIC')
+
+
+def handler(event, context):
+    diff = check_if_changed(CHANGEMONITOR_URL, CHANGEMONITOR_BUCKET)
+    diff_text = "\n".join(diff)
+    if diff_text:
+        notify(CHANGEMONITOR_SNS_TOPIC, diff_text, CHANGEMONITOR_URL)
+
+
+if __name__ == "__main__":
+    handler(None, None)
